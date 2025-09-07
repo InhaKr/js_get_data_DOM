@@ -3,21 +3,36 @@
 // write your code here
 document.addEventListener('DOMContentLoaded', () => {
   const spans = document.querySelectorAll('.population');
-
-
-  const value = Array.from(spans).map((span) => span.textContent);
-  let r = 0;
+  console.log(spans);
+  const value = Array.from(spans).map(span => span.textContent.trim());
+  console.log(value);
+  let r = 0; // Сумма
+  let validCount = 0; // Счётчик валидных чисел
 
   for (let i = 0; i < value.length; i++) {
-    // console.log(typeof(value[i]));
-    r += +value[i].replace(/,/g, '');
+    const cleanValue = value[i].replace(/,/g, '');
+    const parsed = Number(cleanValue); // Преобразуем в число
+    if (Number.isFinite(parsed)) {
+      r += parsed;
+      validCount++;
+      console.log(`Добавлено: ${parsed}, Текущая сумма: ${r}, Валидных значений: ${validCount}`);
+    } else {
+      console.log(`Пропущено некорректное значение: ${value[i]}`);
+    }
   }
 
-  const total = document.querySelector('.total-population');
+  const totalElement = document.querySelector('.total-population');
+  if (totalElement) {
+    totalElement.textContent = r.toLocaleString('en-US');
+  } else {
+    console.log('Элемент с классом .total-population не найден');
+  }
 
-  total.textContent = r.toLocaleString('en-US');
-
-  const average = document.querySelector('.average-population');
-
-  average.textContent = Math.floor(r / value.length).toLocaleString('en-US');
+  const averageElement = document.querySelector('.average-population');
+  if (averageElement) {
+    const average = validCount > 0 ? Math.floor(r / validCount) : 0; // Избегаем деления на 0
+    averageElement.textContent = average.toLocaleString('en-US');
+  } else {
+    console.log('Элемент с классом .average-population не найден');
+  }
 });
